@@ -1,0 +1,43 @@
+#include <Servo.h>
+
+int trigPin = 5;    // Trigger
+int echoPin = 18;    // Echo
+long duration;
+float cm, inches;
+
+Servo servol;
+
+void setup() {
+  Serial.begin(115200);
+  servol.attach(13); // Servo pin
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+}
+
+void RangeAndControlServo() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(5);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  duration = pulseIn(echoPin, HIGH);
+  cm = (duration / 2) / 29.1;
+
+  Serial.print("Distance: ");
+  Serial.print(cm);
+  Serial.print(" cm");
+  Serial.println();
+
+  if (cm < 10) { // Adjust this threshold as needed
+    servol.write(90); // Rotate the servo to 90 degrees
+    delay(5000); // Wait for 1 second (adjust as needed)
+    servol.write(0); // Return the servo to its initial position (0 degrees)
+  }
+
+  delay(250);
+}
+
+void loop() {
+  RangeAndControlServo();
+}
